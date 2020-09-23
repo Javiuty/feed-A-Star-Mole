@@ -96,14 +96,30 @@ function getNextStatus(mole) {
   }
 }
 
+function feed(event) {
+  if (
+    event.target.tagName !== "IMG" ||
+    !event.target.classList.contains("hungry")
+  ) {
+    return;
+  }
+
+  console.log(event.target.dataset.index);
+
+  const mole = moles[parseInt(event.target.dataset.index)];
+
+  mole.status = "fed";
+  mole.next = getSadInterval();
+  mole.node.children[0].src = "../images/mole-fed.png";
+  mole.node.children[0].remove("hungry");
+}
+
 let runAgainAt = Date.now() + 1000;
 
 function nextFrame() {
   const now = Date.now();
 
   if (runAgainAt <= now) {
-    console.log("now");
-
     for (let i = 0; i < moles.length; i++) {
       if (moles[i].next <= now) {
         getNextStatus(moles[i]);
@@ -114,4 +130,6 @@ function nextFrame() {
   requestAnimationFrame(nextFrame);
 }
 
-// nextFrame();
+document.querySelector(".bg").addEventListener("click", feed);
+
+nextFrame();
